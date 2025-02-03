@@ -13,7 +13,14 @@ dotenv.config();
 
 //Configurar Express
 const app = express();
-app.use(cors());
+
+const corsOptions = {
+    origin: 'http://localhost:5173',  // El origen específico de tu frontend
+    credentials: true,               // Permite el uso de credenciales como cookies y cabeceras de autenticación
+  };
+  app.use(cors(corsOptions));
+
+//app.use(cors());
 app.use(express.json());
 
 //Conectar a MongoDB
