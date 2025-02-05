@@ -1,17 +1,41 @@
-import { useState } from "react";
-import { createReservation } from "../api/reservas";
+import { useEffect, useState } from "react";
+import { createReservation, createReservaWithHuesped } from "../api/reservas";
+import { getAllHuespedes } from "../api/huespedes";
+import { getAllEmployees } from "../api/empleados";
 
-
-const FormReservation = () => {
+const FormReservation = ({cama , dia}) => {
     const [formData, setFormData] = useState({
-        huesped:'',
-        habitacion:'',
+        cama: cama ? cama._id : '', 
+        nombre:'',
+        apellido: '',
+        dni: '',
+        telefono:'',
+        domicilio:'',
+        email: '',
+        habitacion: cama ? cama.habitacion : '',
         empleado:'',
-        fechaCheckIn:'',
+        fechaCheckIn: dia ? new Date(dia).toISOString().slice(0, 16) :'',
         fechaCheckOut:'',
         total: 0,
         estado: 'confirmada',
     });
+
+    const [empleados, setEmpleados] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                
+                const empleadosResponse = await getAllEmployees();
+                setEmpleados(empleadosResponse.data);
+
+            } catch (error) {
+                console.error("Erro ao obter dados:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value} = e.target;
@@ -20,83 +44,145 @@ const FormReservation = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+         // Preparamos el objeto de datos para enviar
+         const huespedData = {
+            nombre: formData.nombre,
+            apellido: formData.apellido,
+            dni: formData.dni,
+            telefono: formData.telefono,
+            domicilio: formData.domicilio,
+            email: formData.email,
+        };
+
+        const reservaData = {
+            huesped: null, // Esto se llenará una vez que el huésped sea creado
+            habitacion: formData.habitacion,
+            empleado: formData.empleado,
+            fechaCheckIn: formData.fechaCheckIn,
+            fechaCheckOut: formData.fechaCheckOut,
+            total: formData.total,
+            estado: formData.estado,
+        };
+        
         try {
-            await createReservation(formData);
-            alert('Reserva creada exitosamente');
-            setFormData({
-                huesped: '',
-                habitacion: '',
-                empleado: '',
-                fechaCheckIn: '',
-                fechaCheckOut: '',
-                total: 0,
-                estado: 'confirmada',
-            });
+              // 1. Primero, crea el huésped
+              const huespedResponse = await createReservaWithHuesped(huespedData);
+              const huespedId = huespedResponse.data._id; // Suponiendo que la respuesta devuelve el huesped creado
+  
+              // 2. Ahora, crea la reserva asociada con el huesped recién creado
+              reservaData.huesped = huespedId;
+              const reservaResponse = await createReservaWithHuesped(reservaData);
+  
+              alert('Reserva y huésped creados exitosamente');
+              console.log('Respuesta de reserva y huésped:', reservaResponse.data);
+            
         } catch (error) {
-            console.error('Error creando reserva:', error);
-            alert('Error al crear la reserva');
+            console.error('Error creando reserva o huesped:', error);
+            alert('Error al crear la reserva y el huesped');
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className="form-container" onSubmit={handleSubmit}>
+            <h2>Criar Nova Reserva</h2>
+
+            <label htmlFor="nombre">Nombre del Huésped</label>
             <input
                 type="text"
-                name="huesped"
-                placeholder="ID del Huésped"
-                value={formData.huesped}
+                name="nombre"
+                id="nombre"
+                value={formData.nombre}
                 onChange={handleChange}
                 required
             />
+            <label htmlFor="apellido">Apellido del Huésped</label>
             <input
                 type="text"
-                name="habitacion"
-                placeholder="ID de la Habitación"
-                value={formData.habitacion}
+                name="apellido"
+                id="apellido"
+                value={formData.apellido}
                 onChange={handleChange}
                 required
             />
+            <label htmlFor="dni">DNI del Huésped</label>
             <input
                 type="text"
+                name="dni"
+                id="dni"
+                value={formData.dni}
+                onChange={handleChange}
+                required
+            />
+            <label htmlFor="telefono">Telefono del Huésped</label>
+            <input
+                type="text"
+                name="telefono"
+                id="telefono"
+                value={formData.telefono}
+                onChange={handleChange}
+                required
+            />
+            <label htmlFor="domicilio">Domicilio del Huésped</label>
+            <input
+                type="text"
+                name="domicilio"
+                value={formData.domicilio}
+                onChange={handleChange}            
+            />
+            <label htmlFor="email">Email del Huésped</label>
+            <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+            />
+            
+            <label htmlFor="empleado">Empleado</label>
+            <select
                 name="empleado"
-                placeholder="ID del Empleado"
+                id="empleado"
                 value={formData.empleado}
                 onChange={handleChange}
                 required
-            />
+            >
+                <option value="">Seleccion un empleado</option>
+                {empleados.map((empleado) => (
+                    <option key={empleado._id} value={empleado._id}>
+                        {empleado.nombre} {empleado.apellido}
+                    </option>
+                ))}
+            </select>
+            <label htmlFor="fechaCheckIn">Data Check-In</label>
             <input
                 type="datetime-local"
                 name="fechaCheckIn"
+                id="fechaCheckIn"
                 value={formData.fechaCheckIn}
                 onChange={handleChange}
                 required
             />
+            <label htmlFor="fechaCheckOut">Data Check-Out</label>
             <input
                 type="datetime-local"
                 name="fechaCheckOut"
+                id="fechaCheckOut"
                 value={formData.fechaCheckOut}
                 onChange={handleChange}
                 required
             />
+            <label htmlFor="total">Total</label>
             <input
                 type="number"
                 name="total"
+                id="total"
                 placeholder="Total"
                 value={formData.total}
                 onChange={handleChange}
                 required
             />
-            <select
-                name="estado"
-                value={formData.estado}
-                onChange={handleChange}
-                required
-            >
-                <option value="confirmada">Confirmada</option>
-                <option value="cancelada">Cancelada</option>
-                <option value="completada">Completada</option>
-            </select>
-            <button type="submit">Crear Reserva</button>
+
+            <button type="submit" className="button">Crear Reserva</button>
         </form>
      )
 }

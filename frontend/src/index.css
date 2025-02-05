@@ -1,13 +1,559 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Variables de color */
+:root {
+  --main-color: rgb(2, 170, 2);
+  --mainlight-color: rgb(72, 192, 72);
+  --darkgray: rgb(51, 50, 50);
+  --light-color: #fff;
+  --background-color: #f8f9fa;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* Estilos generales */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f1f1f1;
+}
+
+/* Contenedor principal */
+.container {
+  font-family: 'Arial', sans-serif;
+  margin: 20px auto;
+  padding: 20px;
+  max-width: 1200px;
+  background-color: var(--background-color);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Botones de navegación (Mes, Año) */
+.button {
+  background-color: var(--main-color);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: var(--mainlight-color);
+}
+
+/* Tabla de calendario */
+.table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 2px solid #ccc;
+}
+
+.table th, .table td {
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--darkgray);
+  border: 1px solid #a1a0a0;
+}
+
+.table th {
+  background-color: #f1f1f1;
+  color: var(--main-color);
+  font-weight: bold;
+}
+
+.table td {
+  background-color: #fff;
+  color: var(--darkgray);
+}
+
+/* Estilo para los días del calendario */
+.table td {
+  position: relative;
+}
+
+.table td div {
+  background-color: #dfe6e9;
+  border-radius: 5px;
+  padding: 6px;
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--darkgray);
+}
+
+.table td div:hover {
+  background-color: #b2bec3;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Resaltado de las celdas con reservas */
+.table td.reserved {
+  background-color: #ffe6e6;
+  border-radius: 5px;
+}
+
+.table td.reserved div {
+  font-size: 12px;
+  color: #e74c3c;
+}
+
+.table td.reserved div:hover {
+  background-color: #f39c12;
+  color: #fff;
+}
+
+.table td.reserved:hover {
+  background-color: #f39c12;
+  cursor: pointer;
+}
+
+/* Estilos de formulario */
+.form-container {
+  margin: 20px auto;
+  padding: 20px;
+  background-color: var(--background-color);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+}
+
+.form-container input,
+.form-container select {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--darkgray);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  background-color: #fff;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-container input:focus,
+.form-container select:focus {
+  border: 1px solid var(--main-color);
+  box-shadow: 0 0 5px rgba(2, 170, 2, 0.4);
+}
+
+.form-container button {
+  background-color: var(--main-color);
+  color: var(--light-color);
+  padding: 12px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+}
+
+.form-container button:hover {
+  background-color: var(--mainlight-color);
+  transform: translateY(-2px);
+}
+
+.form-container button:active {
+  background-color: var(--main-color);
+  transform: translateY(0);
+}
+
+/* Estilo para los títulos y las etiquetas del formulario */
+.form-container h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--darkgray);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-container label {
+  font-size: 14px;
+  color: var(--darkgray);
+  margin-bottom: 5px;
+  display: block;
+}
+
+/* Contenedor Principal del Dashboard */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Encabezado del Dashboard */
+.dashboard-header {
+  background-color: #2c3e50;
+  color: white;
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+/* Contenedor principal de las estadísticas */
+.dashboard-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* Resumen de las estadísticas */
+.stats-summary {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background-color: #fff;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(44, 245, 4, 0.1);
+  width: 200px;
+  text-align: center;
+}
+
+.stat-card h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #34495e;
+}
+
+.stat-card p {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2ecc71;
+}
+
+/* Contenedor para las estadísticas de gráficos */
+.statistics-container {
+  background-color: #010500;
+  padding: 20px;
+  width: 100%;
+  max-width: 800px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(23, 250, 3, 0.1);
+}
+
+.statistics-container h2 {
+  text-align: center;
+  color: #02ee35;
+  font-size: 22px;
+}
+
+/* Estilo para el gráfico */
+.statistics-container canvas {
+  max-width: 100%;
+}
+
+.statistics-container ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.statistics-container li {
+  font-size: 16px;
+  color: var(--darkgray);
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  transition: background-color 0.3s ease;
+}
+
+.statistics-container li:hover {
+  background-color: #f1f1f1;
+}
+
+.statistics-container li strong {
+  font-weight: bold;
+  color: var(--main-color);
+}
+
+/* estilos LandingPage*/
+.landingcontainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #015301, #39c951);
+  color: white;
+  text-align: center;
+}
+
+.landingcontent {
+  max-width: 600px;
+  padding: 20px;
+}
+
+.landingcontent h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.landingcontent p {
+  font-size: 1.5rem;
+  margin-bottom: 40px;
+}
+
+.startbutton {
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  color: #6a11cb;
+  background-color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.startbutton:hover {
+  background-color: #f0f0f0;
+}
+
+/*navbar*/
+/* Agregar en index.css */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #333;
+  color: #fff;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logoImage {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.logoText {
+  font-size: 20px;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.menu {
+  display: flex;
+  gap: 20px;
+}
+
+.menuItem {
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.searchInput {
+  padding: 5px;
+  border-radius: 5px;
+  border: none;
+}
+
+.searchResults {
+  position: absolute;
+  top: 40px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  z-index: 1000;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 0;
+  margin: 0;
+}
+
+.searchResults li {
+  padding: 6px;
+  cursor: pointer;
+  list-style: none;
+  color: #555;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.searchResults li:hover {
+  background-color: #535151;
+  color: white;
+}
+
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.username {
+  font-size: 16px;
+}
+
+/* Estilos para el componente HuespedDetail */
+.huesped-detail-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.huesped-info {
+  margin-bottom: 20px;
+}
+
+.huesped-info h2 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.huesped-info p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.reservas-list {
+  list-style: none;
+  padding: 0;
+}
+
+.reserva-item {
+  background-color: #f9f9f9;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.reserva-item p {
+  margin: 5px 0;
+  color: #333;
+}
+
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+    margin: 10px;
+  }
+
+  .table {
+    font-size: 12px;
+  }
+
+  .table th, .table td {
+    padding: 8px;
+  }
+
+  .button {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .form-container {
+    padding: 15px;
+    max-width: 90%;
+  }
+
+  .form-container input,
+  .form-container select {
+    font-size: 12px;
+  }
+
+  .form-container button {
+    font-size: 14px;
+  }
+
+  .stats-summary {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stat-card {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .menu {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .searchBar {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .searchInput {
+    width: 100%;
+  }
+
+  .userSection {
+    margin-top: 10px;
+  }
+
+  .landingcontent h1 {
+    font-size: 2rem;
+  }
+
+  .landingcontent p {
+    font-size: 1.2rem;
+  }
+
+  .startbutton {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .landingcontent h1 {
+    font-size: 1.5rem;
+  }
+
+  .landingcontent p {
+    font-size: 1rem;
+  }
+
+  .startbutton {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
 }

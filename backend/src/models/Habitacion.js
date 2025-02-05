@@ -19,6 +19,10 @@ const HabitacionSchema = new mongoose.Schema({
         enum: ['disponible', 'ocupada'],
         required: true
     },
+    camas: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Cama',
+    }],
     reserva: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Reserva'

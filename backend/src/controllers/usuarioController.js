@@ -25,6 +25,31 @@ exports.getAllUsuarios = async (req, res) => {
     }
 };
 
+exports.getAllUsersByParams = async (req, res) => {
+    const {username, password} = req.query;    
+    console.log('aqui mis parametros recibidos:', {username, password})
+
+    try {
+        if (!username || !password){
+            return res.status(400).json({ error: 'Faltan parámetros username o password.'})
+        }
+
+        const query = {username, password};
+
+        const usuarios = await Usuario.find(query)
+        .populate('empleado');    
+
+        if(usuarios.length === 0) {
+            return res.status(404).json({ error: 'No se encontraron usuarios con esos datos.'})
+        }
+
+        res.status(200).json(usuarios);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener los usuarios'})
+    }
+}
+
 exports.getUsuarioById = async (req, res) => {
     const {id} = req.params;
 

@@ -7,6 +7,7 @@ const empleadoRoutes = require('./routes/empleadoRoutes');
 const habitacionRoutes = require('./routes/habitacionRoutes');
 const reservasRoutes = require('./routes/reservaRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
+const camasRoutes = require('./routes/camasRoutes');
 
 //Cragar variables de entorno
 dotenv.config();
@@ -37,6 +38,7 @@ app.use('/api/habitaciones', habitacionRoutes);
 app.use('/api/huespedes', huespedRoutes);
 app.use('/api/reservas',reservasRoutes );
 app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/camas', camasRoutes );
 
 //Manejo de errores
 app.use((err, req, res, next) => {
