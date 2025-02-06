@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
-import { createReservation, createReservaWithHuesped } from "../api/reservas";
-import { getAllHuespedes } from "../api/huespedes";
+import { createReservaWithHuesped } from "../api/reservas";
 import { getAllEmployees } from "../api/empleados";
+import { useLocation, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
-const FormReservation = ({cama , dia, onReservaCreada, setSelectedCama, setSelectedDia}) => {
+const FormReservation = ({ onReservaCreada, setSelectedCama, setSelectedDia}) => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { cama, dia } = location.state || {};
+
     const [formData, setFormData] = useState({
         cama: cama ? cama._id : '', 
         nombre:'',
@@ -54,7 +59,7 @@ const FormReservation = ({cama , dia, onReservaCreada, setSelectedCama, setSelec
             domicilio: formData.domicilio,
             email: formData.email,
             reservaData : {                
-                cama: formData.cama,    
+                camas: [formData.cama],    
                 habitacion: formData.habitacion,
                 empleado: formData.empleado,
                 fechaCheckIn: formData.fechaCheckIn,
@@ -67,10 +72,17 @@ const FormReservation = ({cama , dia, onReservaCreada, setSelectedCama, setSelec
         try {              
               const response = await createReservaWithHuesped(dataToSend);     
             
-              alert('Reserva y huésped creados exitosamente');
-              console.log('Respuesta de reserva y huésped:', response.data);  
+            //   alert('Reserva y huésped creados exitosamente');
+            //   console.log('Respuesta de reserva y huésped:', response.data);  
               
-              // Limpiar el formulario después de crear la reserva
+             
+              Swal.fire({
+                title: "¡Reserva creada!",
+                text: "La reserva y el huésped se han creado exitosamente.",
+                icon: "success",
+                confirmButtonText: "Aceptar",
+            }).then(() => {
+                 // Limpiar el formulario 
         setFormData({
             cama: '',
             nombre: '',
@@ -96,9 +108,18 @@ const FormReservation = ({cama , dia, onReservaCreada, setSelectedCama, setSelec
             onReservaCreada();
         }
 
+        navigate('/calendar');
+    });
+
         } catch (error) {
             console.error('Error creando reserva o huesped:', error);
-            alert('Error al crear la reserva y el huesped');
+            
+            Swal.fire({
+                title: "Error",
+                text: "Hubo un problema al crear la reserva y el huésped.",
+                icon: "error",
+                confirmButtonText: "Aceptar",
+            });
         }
     };
 

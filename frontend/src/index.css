@@ -459,6 +459,87 @@ body {
   color: #333;
 }
 
+/*login*/
+/* Estilos para el contenedor principal */
+.loginContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f4f8f6; /* Fondo suave */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Título */
+h2 {
+  color: var(--main-color);
+  font-family: 'Roboto', sans-serif;
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+/* Mensaje de error */
+.error {
+  color: #e63946; /* Rojo de error */
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+/* Formulario */
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Estilos de los inputs */
+.input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #4caf50; /* Verde claro */
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: #f0f4f1;
+  color: #2d6a4f;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input:focus {
+  border-color: var(--main-color); /* Verde oscuro */
+  box-shadow: 0 0 5px rgba(45, 106, 79, 0.5);
+  outline: none;
+}
+
+/* Estilos del botón */
+.button {
+  padding: 12px 20px;
+  background-color: var(--mainlight-color); /* Verde oscuro */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.button:hover {
+  background-color: var(--main-color); /* Verde más oscuro */
+  transform: translateY(-2px);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
 
 /* Estilos responsivos */
 @media (max-width: 768px) {
@@ -556,4 +637,8 @@ body {
     padding: 8px 16px;
     font-size: 0.9rem;
   }
+
+  .loginForm {
+    padding: 30px;
+}
 }

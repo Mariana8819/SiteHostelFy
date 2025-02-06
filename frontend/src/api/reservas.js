@@ -3,8 +3,8 @@ import axios from './axios';
 export const createReservation = (data) =>
     axios.post('/reservas', data);
 
-export const createReservaWithHuesped = (data) =>
-    axios.post('/reservas/reserva-huesped', data);
+export const createReservaWithHuesped = (dataToSend) =>
+    axios.post('/reservas/reserva-huesped', dataToSend);
 
 
 export const getAllReservation = () => 
