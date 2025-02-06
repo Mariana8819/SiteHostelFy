@@ -13,6 +13,10 @@ const ReservaSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Empleado',
     },
+    camas: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Cama',
+    }],
     fechaCheckIn: {
         type: Date,
         required: true
@@ -28,7 +32,7 @@ const ReservaSchema = new mongoose.Schema({
     estado: {
         type: String,
         enum: [ 'confirmada', 'cancelada', 'completada'],
-        required: true            //pendiente, confirmado , cancelada
+        required: true           
     },
 });
 

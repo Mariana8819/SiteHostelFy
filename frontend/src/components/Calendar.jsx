@@ -146,7 +146,16 @@ const getReservationForBedAndDay = (camaId, dia) => {
 const handleCamaClick = (cama, dia) => {
     setSelectedCama(cama);
     setSelectedDia(dia);
-}
+};
+
+const updateReservas = async () => {
+    try {
+        const response = await getAllReservation();
+        setReservas(response.data);
+    } catch (error) {
+        console.error('Erro ao pesquisar reservas:', error);
+    }
+};
 
 
 // //Filtrar reservas por habitacion y día
@@ -210,7 +219,13 @@ return (
         </table>
 
         {selectedCama && selectedDia &&(
-             <FormReservation cama={selectedCama} dia={selectedDia}/>
+             <FormReservation 
+             cama={selectedCama} 
+             dia={selectedDia}
+             onReservaCreada={updateReservas}
+             setSelectedCama={setSelectedCama}
+             setSelectedDia={setSelectedDia}
+             />
             )}
     </div>
  );

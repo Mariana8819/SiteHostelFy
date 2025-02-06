@@ -17,8 +17,7 @@ const CamaSchema = new mongoose.Schema({
     },
     habitacion: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Habitacion',
-        required: true,
+        ref: 'Habitacion'
     },
     reserva: {
         type: mongoose.Schema.Types.ObjectId,

@@ -3,7 +3,7 @@ import { createReservation, createReservaWithHuesped } from "../api/reservas";
 import { getAllHuespedes } from "../api/huespedes";
 import { getAllEmployees } from "../api/empleados";
 
-const FormReservation = ({cama , dia}) => {
+const FormReservation = ({cama , dia, onReservaCreada, setSelectedCama, setSelectedDia}) => {
     const [formData, setFormData] = useState({
         cama: cama ? cama._id : '', 
         nombre:'',
@@ -46,37 +46,56 @@ const FormReservation = ({cama , dia}) => {
         e.preventDefault();
 
          // Preparamos el objeto de datos para enviar
-         const huespedData = {
+         const dataToSend = {
             nombre: formData.nombre,
             apellido: formData.apellido,
             dni: formData.dni,
             telefono: formData.telefono,
             domicilio: formData.domicilio,
             email: formData.email,
-        };
-
-        const reservaData = {
-            huesped: null, // Esto se llenará una vez que el huésped sea creado
-            habitacion: formData.habitacion,
-            empleado: formData.empleado,
-            fechaCheckIn: formData.fechaCheckIn,
-            fechaCheckOut: formData.fechaCheckOut,
-            total: formData.total,
-            estado: formData.estado,
-        };
+            reservaData : {                
+                cama: formData.cama,    
+                habitacion: formData.habitacion,
+                empleado: formData.empleado,
+                fechaCheckIn: formData.fechaCheckIn,
+                fechaCheckOut: formData.fechaCheckOut,
+                total: formData.total,
+                estado: formData.estado,
+        }
+    };
         
-        try {
-              // 1. Primero, crea el huésped
-              const huespedResponse = await createReservaWithHuesped(huespedData);
-              const huespedId = huespedResponse.data._id; // Suponiendo que la respuesta devuelve el huesped creado
-  
-              // 2. Ahora, crea la reserva asociada con el huesped recién creado
-              reservaData.huesped = huespedId;
-              const reservaResponse = await createReservaWithHuesped(reservaData);
-  
-              alert('Reserva y huésped creados exitosamente');
-              console.log('Respuesta de reserva y huésped:', reservaResponse.data);
+        try {              
+              const response = await createReservaWithHuesped(dataToSend);     
             
+              alert('Reserva y huésped creados exitosamente');
+              console.log('Respuesta de reserva y huésped:', response.data);  
+              
+              // Limpiar el formulario después de crear la reserva
+        setFormData({
+            cama: '',
+            nombre: '',
+            apellido: '',
+            dni: '',
+            telefono: '',
+            domicilio: '',
+            email: '',
+            habitacion: '',
+            empleado: '',
+            fechaCheckIn: '',
+            fechaCheckOut: '',
+            total: 0,
+            estado: 'confirmada',
+        });
+
+        // Cerrar el formulario 
+        if (setSelectedCama) setSelectedCama(null);
+        if (setSelectedDia) setSelectedDia(null);
+
+        //Actualizar el calendario
+        if (onReservaCreada) {
+            onReservaCreada();
+        }
+
         } catch (error) {
             console.error('Error creando reserva o huesped:', error);
             alert('Error al crear la reserva y el huesped');

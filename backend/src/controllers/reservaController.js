@@ -9,7 +9,7 @@ const Cama = require('../models/Cama');
         const {camas, habitacion, ...restoReserva } = req.body;
 
         //verificar que las cmas seleccionadas están disponibles
-        const camasObj = await Cama.find({ '_id': {$in: camas }});
+        const camasObj = await Cama.find({ '_id': {$in: camas }, estado: 'disponible'});
         if(camasObj.length !== camas.length) {
             return res.status(400).json({ error: 'Algunas camas no existen.' });
         }
@@ -34,6 +34,21 @@ const Cama = require('../models/Cama');
     try {
         const {nombre, apellido, dni, telefono, domicilio, email, reservaData } = req.body;
 
+        const camas = reservaData.camas;
+
+        if(!camas || camas.length === 0){
+        return res.status(400).json({ error: 'No se han proporcionado camas para la reserva'})
+        }
+
+         //verificar que las cmas seleccionadas están disponibles
+         const camasObj = await Cama.find({ '_id': {$in: camas }});
+         console.log('Camas seleccionadas:', camas);  // Log de camas pasadas
+         console.log('Camas encontradas:', camasObj);
+
+         if(camasObj.length !== camas.length) {
+             return res.status(400).json({ error: 'Algunas camas no existen.' });
+         }
+        
         const huesped = new Huesped({
             nombre: nombre,
             apellido: apellido,
@@ -47,6 +62,7 @@ const Cama = require('../models/Cama');
 
         const reserva = new Reserva({
             huesped: huesped._id,  // Asignamos el ID del huesped recién creado
+            cama: camas,  //Asignamos el Id de la cama
             habitacion: reservaData.habitacion,
             empleado: reservaData.empleado,
             fechaCheckIn: reservaData.fechaCheckIn,
@@ -57,7 +73,17 @@ const Cama = require('../models/Cama');
 
         await reserva.save();
 
-        //finalmente actualizamos la relacion con el Huesped
+        // Actualizamos el estado de todas las camas
+        await Cama.updateMany(
+            { '_id': { $in: camas } },  // Actualiza todas las camas
+            { $set: { estado: 'reservada', reserva: reserva._id } }
+        );
+
+        //Asociamos las camas a la reserva 
+        reserva.camas = camasObj.map(cama => cama._id);
+        await reserva.save();
+
+        //Actualizar la relacion con el Huesped
         huesped.reserva.push(reserva._id);
         await huesped.save();
 
@@ -73,7 +99,8 @@ const Cama = require('../models/Cama');
         const reservas = await Reserva.find()
         .populate('huesped')
         .populate('habitacion')
-        .populate('empleado');
+        .populate('empleado')
+        .populate('camas')
 
         res.status(200).json(reservas);
     } catch (error) {
@@ -89,7 +116,8 @@ const Cama = require('../models/Cama');
         const reserva = await Reserva.findById(id)
         .populate('empleado')
         .populate('huesped')
-        .populate('habitacion');
+        .populate('habitacion')
+        .populate('camas')
 
         if(!reserva){
             return res.status(404).json({ error:'Reserva no encontrada'});
